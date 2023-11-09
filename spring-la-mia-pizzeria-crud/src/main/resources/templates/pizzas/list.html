@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaft.org">
+<head th:insert="fragments/resources :: headResources('Pizza List')"></head>
+<body>
+<div class="container">
+    <h1>Pizza List</h1>
+    <hr>
+
+    <div th:if="${pizzaList.empty}">
+        <h2>Nessuna pizza presente in lista.</h2>
+    </div>
+
+    <table class="table" th:if="${not pizzaList.empty}">
+        <thead>
+        <th>Prezzo</th>
+        <th>Nome</th>
+        <th>Descrizione</th>
+        <th>Foto</th>
+        </thead>
+        <tbody>
+        <tr th:each="pizza : ${pizzaList}">
+            <td th:text="|€${pizza.price}|"></td>
+            <td th:text="${pizza.name}"></td>
+            <td class="descrizione_pizza" th:text="${pizza.description}"></td>
+            <td><img class="foto_pizza" th:src="${pizza.photo}" alt="pizza"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<script th:replace="fragments/resources :: jsResources"></script>
+</body>
+</html>

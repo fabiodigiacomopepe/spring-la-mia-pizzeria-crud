@@ -1,0 +1,24 @@
+body {
+    background-image: url("https://img.freepik.com/premium-photo/dark-wooden-rustic-background-wooden-table_152391-60.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+h1 {
+    color: white;
+}
+
+.foto_pizza {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.descrizione_pizza {
+    width: 50%;
+}
+
+table .table {
+    --bs-table-bg: #ffffffe0;
+}
