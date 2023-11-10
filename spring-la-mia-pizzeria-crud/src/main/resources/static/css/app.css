@@ -5,7 +5,10 @@ body {
 }
 
 h1 {
-    color: white;
+    color: black;
+    text-shadow: 2px 0 #fff, -2px 0 #fff, 0 2px #fff, 0 -2px #fff, 1px 1px #fff, -1px -1px #fff, 1px -1px #fff, -1px 1px #fff;
+    font-weight: bold;
+    margin-top: 15px;
 }
 
 .foto_pizza {
@@ -21,4 +24,13 @@ h1 {
 
 table .table {
     --bs-table-bg: #ffffffe0;
+}
+
+.pulsante_pizza {
+    color: black;
+}
+
+.pulsante_pizza:hover {
+    color: brown;
+    cursor: pointer;
 }

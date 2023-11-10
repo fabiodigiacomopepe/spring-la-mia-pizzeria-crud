@@ -4,17 +4,21 @@ import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 
+// Entity indica che la classe è una tabella
+// Table serve per indicare il nome della tabella se è diverso da nome della classe
 @Entity
 @Table(name = "pizzas")
 public class Pizza {
+    // Attributi (in questo caso nomi delle colonne)
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)  // Per auto-increment
     private Integer id;
     private String name;
     private String description;
     private String photo;
     private BigDecimal price;
 
+    // GETTER E SETTER (FONDAMENTALI)
     public Integer getId() {
         return id;
     }

@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaft.org">
+<head th:insert="fragments/resources :: headResources('Error 5xx')"></head>
+<body>
+<div class="container">
+    <h1>PROBLEMA INTERNO</h1>
+    <a th:href="@{/pizzas}" class="btn btn-primary">Torna Indietro</a>
+    <div th:insert="fragments/resources :: errorDetails"
+         style="background-color: white; padding: 20px; margin-top: 30px;"></div>
+</div>
+<script th:replace="fragments/resources :: jsResources"></script>
+</body>
+</html>

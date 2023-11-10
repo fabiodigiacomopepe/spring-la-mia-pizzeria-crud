@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaft.org">
+<head th:insert="fragments/resources :: headResources('Pizza Show')"></head>
+<body>
+<div class="container" th:object="${pizza}" style="background-color: white; padding: 20px; margin-top: 30px;">
+    <h1 th:text="*{name}"></h1>
+    <hr>
+    <dl class="d-flex align-items-center justify-content-between">
+        <div style="width: 70%; font-size: 25px;">
+            <dt>Ingredienti</dt>
+            <dd th:text="*{description}"></dd>
+            <dt>Prezzo</dt>
+            <dd th:text="|€*{price}|"></dd>
+        </div>
+        <div style="width: 30%">
+            <dd><img style="width: 300px; height: 300px; object-fit: cover;" th:src="*{photo}" alt="pizza"></dd>
+        </div>
+    </dl>
+    <div class="mt-2">
+        <a th:href="@{/pizzas}" class="btn btn-primary">Torna alla lista</a>
+    </div>
+</div>
+<script th:replace="fragments/resources :: jsResources"></script>
+</body>
+</html>

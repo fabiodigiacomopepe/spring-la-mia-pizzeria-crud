@@ -3,22 +3,40 @@
 <head th:insert="fragments/resources :: headResources('Pizza List')"></head>
 <body>
 <div class="container">
-    <h1>Pizza List</h1>
-    <hr>
+    <div class="d-flex align-items-center justify-content-between">
+        <h1>Pizza List</h1>
+        <form th:action="@{/pizzas}" method="GET">
+            <div class="input-group">
+                <input
+                        type="text"
+                        placeholder="Cerca per titolo"
+                        class="form-control" name="search"
+                        th:value="${param.search}"
+                >
+                <button class="btn btn-primary" type="submit">Cerca</button>
+            </div>
+        </form>
+    </div>
 
-    <div th:if="${pizzaList.empty}">
+    <div th:if="${pizzaList.empty}" style="background-color: white; padding: 20px;">
         <h2>Nessuna pizza presente in lista.</h2>
     </div>
 
     <table class="table" th:if="${not pizzaList.empty}">
         <thead>
+        <th></th>
         <th>Prezzo</th>
         <th>Nome</th>
-        <th>Descrizione</th>
+        <th>Ingredienti</th>
         <th>Foto</th>
         </thead>
         <tbody>
         <tr th:each="pizza : ${pizzaList}">
+            <td style="text-align: center">
+                <a th:href="@{/pizzas/show/{id}(id=${pizza.id})}" class="pulsante_pizza">
+                    <i class="fa-solid fa-pizza-slice"></i>
+                </a>
+            </td>
             <td th:text="|€${pizza.price}|"></td>
             <td th:text="${pizza.name}"></td>
             <td class="descrizione_pizza" th:text="${pizza.description}"></td>
