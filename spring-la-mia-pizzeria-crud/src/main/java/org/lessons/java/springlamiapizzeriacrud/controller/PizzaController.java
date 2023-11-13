@@ -1,15 +1,14 @@
 package org.lessons.java.springlamiapizzeriacrud.controller;
 
+import jakarta.validation.Valid;
 import org.lessons.java.springlamiapizzeriacrud.model.Pizza;
 import org.lessons.java.springlamiapizzeriacrud.repository.PizzaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -51,5 +50,27 @@ public class PizzaController {
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND,
                         "Pizza with ID " + id + ": Not Found")));
         return "pizzas/show";
+    }
+
+    // Rotta "/pizzas/create" (GET)
+    @GetMapping("/create")
+    public String createGet(Model model) {
+        // Istanzio un nuovo oggetto Pizza e lo passo con il model
+        model.addAttribute("pizza", new Pizza());
+        return "pizzas/create";
+    }
+
+    // Rotta "/pizzas/create" (POST)
+    @PostMapping("/create")
+    public String createPost(@Valid @ModelAttribute("pizza") Pizza formPizza, BindingResult bindingResult) {
+        // Controllo se ci sono errori
+        if (bindingResult.hasErrors()) {
+            // Se ci sono ricarico la pagina mantendendo i dati (grazie al model)
+            return "pizzas/create";
+        }
+        // Recupero l'oggetto Pizza dal model e lo salvo in formPizza
+        // Creo una nuovo oggetto Pizza chiamato savedPizza e passo i dati dal form (formPizza)
+        Pizza savedPizza = pizzaRepository.save(formPizza);
+        return "redirect:/pizzas/show/" + savedPizza.getId();
     }
 }

@@ -34,3 +34,7 @@ table .table {
     color: brown;
     cursor: pointer;
 }
+
+.create {
+    color: white;
+}

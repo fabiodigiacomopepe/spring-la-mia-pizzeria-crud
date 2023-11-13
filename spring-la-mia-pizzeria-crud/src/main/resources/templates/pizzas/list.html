@@ -3,8 +3,11 @@
 <head th:insert="fragments/resources :: headResources('Pizza List')"></head>
 <body>
 <div class="container">
+    <h1>Pizza List</h1>
     <div class="d-flex align-items-center justify-content-between">
-        <h1>Pizza List</h1>
+        <div class="my-3">
+            <a th:href="@{/pizzas/create}" class="btn btn-primary">Crea nuova pizza</a>
+        </div>
         <form th:action="@{/pizzas}" method="GET">
             <div class="input-group">
                 <input

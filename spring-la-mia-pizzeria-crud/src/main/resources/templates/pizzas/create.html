@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:insert="fragments/resources :: headResources('Pizza Create')"></head>
+<body>
+<div class="container create">
+    <h1>Crea Pizza</h1>
+    <hr>
+    <form
+            id="pizza-create"
+            method="POST"
+            th:action="@{/pizzas/create}"
+            th:object="${pizza}"
+            class="row"
+    >
+
+        <!-- <label for="name" class="form-label">Nome</label> -->
+        <!-- <input type=text class="form-control" id="name" th:field="*{name}" -->
+        <div class="col-9" th:insert="fragments/components :: formField('text', 'Nome', 'name')"></div>
+
+        <!-- <label for="price" class="form-label">Prezzo</label> -->
+        <!-- <input type=number class="form-control" id="price" th:field="*{price}"> -->
+        <div class="col-3" th:insert="fragments/components :: formField('number', 'Prezzo', 'price')"></div>
+
+        <!-- <label for="photo" class="form-label">URL Foto</label> -->
+        <!-- <input type=text class="form-control" id="photo" th:field="*{photo}"> -->
+        <div th:insert="fragments/components :: formField('text', 'URL Foto', 'photo')"></div>
+
+        <!-- <label for="description" class="form-label">Ingredienti</label> -->
+        <!-- <textarea class="form-control" id="description" rows="4" th:field="*{description}"></textarea> -->
+        <div th:insert="fragments/components :: formField('textarea', 'Ingredienti', 'description')"></div>
+
+        <div class="mt-4 mb-5">
+            <button class="btn btn-primary" type="submit">Salva</button>
+            <a th:href="@{/pizzas}" class="btn btn-primary">Torna indietro</a>
+        </div>
+    </form>
+</div>
+</body>
+</html>

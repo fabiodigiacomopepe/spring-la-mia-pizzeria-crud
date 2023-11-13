@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+<th:block th:fragment="formField(type, label, fieldName)">
+    <label th:for="${fieldName}"
+           class="form-label"
+           th:text="${label}">
+    </label>
+    <th:block th:if="${type == 'text' || type == 'number'}">
+        <input th:type="${type}"
+               class="form-control"
+               th:id="${fieldName}"
+               th:field="*{__${fieldName}__}"
+               th:errorClass="is-invalid"
+        >
+    </th:block>
+    <th:block th:if="${type == 'textarea'}">
+        <textarea class="form-control"
+                  th:id="${fieldName}"
+                  rows="4"
+                  th:field="*{__${fieldName}__}"
+                  th:errorClass="is-invalid"
+        ></textarea>
+    </th:block>
+    <div th:if="${#fields.hasErrors(fieldName)}" class="invalid-feedback">
+        <ul class="p-2"
+            style="
+            list-style-type: none;
+            background-color: #e02b29a6;
+            color: white;
+            font-weight: bold;
+            width: fit-content;
+            border-radius: 10px;"
+        >
+            <li th:each="error : ${#fields.errors(fieldName)}" th:text="${error}"></li>
+        </ul>
+    </div>
+</th:block>
