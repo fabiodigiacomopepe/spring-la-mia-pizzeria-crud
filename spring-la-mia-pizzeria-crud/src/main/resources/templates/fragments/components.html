@@ -6,8 +6,17 @@
            class="form-label"
            th:text="${label}">
     </label>
-    <th:block th:if="${type == 'text' || type == 'number'}">
+    <th:block th:if="${type == 'text'}">
         <input th:type="${type}"
+               class="form-control"
+               th:id="${fieldName}"
+               th:field="*{__${fieldName}__}"
+               th:errorClass="is-invalid"
+        >
+    </th:block>
+    <th:block th:if="${type == 'number'}">
+        <input th:type="${type}"
+               step="any"
                class="form-control"
                th:id="${fieldName}"
                th:field="*{__${fieldName}__}"

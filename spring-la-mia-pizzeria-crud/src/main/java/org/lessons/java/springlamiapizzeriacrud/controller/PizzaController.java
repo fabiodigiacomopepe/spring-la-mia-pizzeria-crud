@@ -1,8 +1,9 @@
 package org.lessons.java.springlamiapizzeriacrud.controller;
 
 import jakarta.validation.Valid;
+import org.lessons.java.springlamiapizzeriacrud.exceptions.PizzaNotFoundException;
 import org.lessons.java.springlamiapizzeriacrud.model.Pizza;
-import org.lessons.java.springlamiapizzeriacrud.repository.PizzaRepository;
+import org.lessons.java.springlamiapizzeriacrud.service.PizzaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -12,32 +13,20 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
 import java.util.Optional;
 
 @Controller
 @RequestMapping("/pizzas")
 public class PizzaController {
-    // Istanzio automaticamente PizzaRepository tramite Autowired
     @Autowired
-    private PizzaRepository pizzaRepository;
+    private PizzaService pizzaService;
 
     // Rotta "/pizzas"
     // Parametro di ricerca è OPZIONALE perchè alla rotta si può accedere sia normalmente sia tramite ricerca
     @GetMapping
     public String index(@RequestParam Optional<String> search, Model model) {
-        // Inizializzo lista
-        List<Pizza> pizzaList;
-        // Se è stato passato un parametro di ricerca
-        if (search.isPresent()) {
-            // Lo prendo con il .GET() e lo utilizzo per farmi ritornare una lista filtrata in base al nome
-            pizzaList = pizzaRepository.findByNameContainingIgnoreCase(search.get());
-        } else {
-            // Altrimenti ritorno lista completa
-            pizzaList = pizzaRepository.findAll();
-        }
         // Passo il risultato al model
-        model.addAttribute("pizzaList", pizzaList);
+        model.addAttribute("pizzaList", pizzaService.getPizzaList(search));
         return "pizzas/list";
     }
 
@@ -45,12 +34,13 @@ public class PizzaController {
     @GetMapping("/show/{id}")
     // Prendo l'id dal path
     public String show(@PathVariable Integer id, Model model) {
-        // Passo al model l'oggetto pizza recuperato tramite repository
-        // Se non lo trovo lancio una eccezione con messaggio
-        model.addAttribute("pizza", pizzaRepository.findById(id).orElseThrow(
-                () -> new ResponseStatusException(HttpStatus.NOT_FOUND,
-                        "Pizza with ID " + id + ": Not Found")));
-        return "pizzas/show";
+        try {
+            Pizza pizza = pizzaService.getPizzaById(id);
+            model.addAttribute("pizza", pizza);
+            return "pizzas/show";
+        } catch (PizzaNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
     }
 
     // Rotta "/pizzas/create" (GET)
@@ -71,23 +61,20 @@ public class PizzaController {
         }
         // Recupero l'oggetto Pizza dal model e lo salvo in formPizza
         // Creo una nuovo oggetto Pizza chiamato savedPizza e passo i dati dal form (formPizza)
-        Pizza savedPizza = pizzaRepository.save(formPizza);
+        Pizza savedPizza = pizzaService.createPizza(formPizza);
         return "redirect:/pizzas/show/" + savedPizza.getId();
     }
 
     // Rotta "/pizzas/edit/id <---(dinamico)" (GET)
     @GetMapping("/edit/{id}")
     public String editGet(@PathVariable Integer id, Model model) {
-        // Salvo in result in modo Optional perchè potrebbe non ritornare nulla
-        Optional<Pizza> result = pizzaRepository.findById(id);
-        // Se il risultato è presente
-        if (result.isPresent()) {
-            // Passo la pizza con il model (result.get())
-            model.addAttribute("pizza", result.get());
+        try {
+            // Passo la pizza con il model
+            model.addAttribute("pizza", pizzaService.getPizzaById(id));
             return "/pizzas/create_update";
-        } else {
+        } catch (PizzaNotFoundException e) {
             // Altrimenti lancio eccezione
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Pizza with ID " + id + ": Not Found");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
 
@@ -109,20 +96,12 @@ public class PizzaController {
             // Se ci sono errori ricarico la pagina
             return "/pizzas/create_update";
         }
-
-        // Provo a prendere pizza in base a id, in caso tiro eccezione
-        Pizza pizzaToEdit = pizzaRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-
-        // Valorizzo con i setter i vari parametri passando quelli ricevuti dal form
-        pizzaToEdit.setName(formPizza.getName());
-        pizzaToEdit.setDescription(formPizza.getDescription());
-        pizzaToEdit.setPhoto(formPizza.getPhoto());
-        pizzaToEdit.setPrice(formPizza.getPrice());
-
-        // Salvo la pizza
-        // Metodo .save salva ciò che riceve. Se i campi nel form mancano, li lascia vuoti (non si comporta come update)
-        Pizza savedPizza = pizzaRepository.save(pizzaToEdit);
-        return "redirect:/pizzas/show/" + savedPizza.getId();
+        try {
+            Pizza savedPizza = pizzaService.editPizza(formPizza);
+            return "redirect:/pizzas/show/" + savedPizza.getId();
+        } catch (PizzaNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
     }
 
     // Rotta "/pizzas/delete/id <---(dinamico)" (POST)
@@ -131,12 +110,16 @@ public class PizzaController {
     // @PathVariable Integer id -> per gestire quale elemento eliminare
     // RedirectAttributes redirectAttributes -> attributi che ci sono solo nel redirect
     public String delete(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
-        // Provo a prendere pizza in base a id, in caso tiro eccezione
-        Pizza pizzaToDelete = pizzaRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-        // Elimino pizza per id
-        pizzaRepository.deleteById(id);
-        // Passo il messaggio durante il redirect
-        redirectAttributes.addFlashAttribute("message", "Pizza '" + pizzaToDelete.getName() + "' eliminata correttamente!");
-        return "redirect:/pizzas";
+        try {
+            // Provo a prendere pizza in base a id
+            Pizza pizzaToDelete = pizzaService.getPizzaById(id);
+            // Elimino pizza per id
+            pizzaService.deletePizza(id);
+            // Passo il messaggio durante il redirect
+            redirectAttributes.addFlashAttribute("message", "Pizza '" + pizzaToDelete.getName() + "' eliminata correttamente!");
+            return "redirect:/pizzas";
+        } catch (PizzaNotFoundException e) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        }
     }
 }
