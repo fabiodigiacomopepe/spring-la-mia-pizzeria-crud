@@ -31,10 +31,34 @@ table .table {
 }
 
 .pulsante_pizza:hover {
-    color: brown;
+    color: #0d6efd;
     cursor: pointer;
 }
 
 .create {
     color: white;
+}
+
+.table > :not(caption) > * > * {
+    padding: .5rem 1.5rem;
+}
+
+a {
+    text-decoration: none;
+}
+
+i {
+    width: 25px;
+    color: white;
+    font-size: 13px;
+    background-color: #0d6efd;
+    padding: 4px 5px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+#pulsante_elimina {
+    background-color: white;
+    border: none;
+    padding: 0;
 }

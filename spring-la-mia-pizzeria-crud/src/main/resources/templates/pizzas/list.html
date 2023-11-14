@@ -3,6 +3,10 @@
 <head th:insert="fragments/resources :: headResources('Pizza List')"></head>
 <body>
 <div class="container">
+    <div th:if="${message !=null}" class="alert alert-success alert-dismissible fade show">
+        <span th:text="${message}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
     <h1>Pizza List</h1>
     <div class="d-flex align-items-center justify-content-between">
         <div class="my-3">
@@ -34,11 +38,23 @@
         <th>Foto</th>
         </thead>
         <tbody>
-        <tr th:each="pizza : ${pizzaList}">
-            <td style="text-align: center">
+        <tr th:each="pizza : ${pizzaList}" style="vertical-align: middle;">
+            <td class="d-flex flex-column">
                 <a th:href="@{/pizzas/show/{id}(id=${pizza.id})}" class="pulsante_pizza">
                     <i class="fa-solid fa-pizza-slice"></i>
+                    Visualizza
                 </a>
+                <a th:href="@{/pizzas/edit/{id}(id=${pizza.id})}" class="pulsante_pizza">
+                    <i class="fa-solid fa-pen"></i>
+                    Modifica
+                </a>
+                <form method="POST" th:action="@{/pizzas/delete/{id}(id=${pizza.id})}"
+                      onsubmit="return confirm('Sei sicuro?')">
+                    <button type="submit" id="pulsante_elimina" class="pulsante_pizza">
+                        <i class="fa-solid fa-trash"></i>
+                        Elimina
+                    </button>
+                </form>
             </td>
             <td th:text="|€${pizza.price}|"></td>
             <td th:text="${pizza.name}"></td>

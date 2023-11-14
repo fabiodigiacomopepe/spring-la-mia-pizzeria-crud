@@ -1,14 +1,15 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head th:insert="fragments/resources :: headResources('Pizza Create')"></head>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:with="isEdit=${pizza.id != null}">
+<head th:insert="fragments/resources :: headResources(${isEdit ? 'Pizza Edit' : 'Pizza Create'})"></head>
 <body>
 <div class="container create">
-    <h1>Crea Pizza</h1>
+    <h1 th:text="${isEdit ? 'Modifica Pizza' : 'Crea Pizza'}"></h1>
     <hr>
     <form
+            th:with="actionUrl=${isEdit ? '/pizzas/edit/' + pizza.id : '/pizzas/create'}"
             id="pizza-create"
             method="POST"
-            th:action="@{/pizzas/create}"
+            th:action="@{${actionUrl}}"
             th:object="${pizza}"
             class="row"
     >
